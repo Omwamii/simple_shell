@@ -7,14 +7,14 @@ void print_dirs(const char *path)
 {
 	const char *start = path;
 	const char *end;
-	int len;
+	size_t len;
 	char *buffer;
 
 	while (*start != '\0')
 	{
 		end = start;
 
-		while(*end != ':' && *end != '\0')
+		while(*end != ':' && *(end) != '\0')
 		{
 			end++;
 		}
@@ -34,7 +34,10 @@ void print_dirs(const char *path)
 
 		free(buffer);
 
-		start = end + 1;
+		if (*end == ':')
+			start = end + 1;
+		else
+			break;
 	}
 
 }
@@ -43,7 +46,11 @@ int main(void)
 {
 	char *path = getenv("PATH");
 
-	printf("%s\n\n\n", path);
+	if (path == NULL)
+	{
+		fprintf(stderr, "Error: PATH environment variable not set\n");
+		return (1);
+	}
 	print_dirs(path);
 
 	return (0);
