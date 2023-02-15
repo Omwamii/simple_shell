@@ -33,17 +33,18 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 				exit(EXIT_FAILURE);
 			}
 
-			buf2 = strtok(buffer, "\n");
+			if (buffer[nread - 1] == '\n')
+				buffer[nread - 1] = '\0';
 
-			if (access(buf2, X_OK) == 0)
+			if (access(buffer, X_OK) == 0)
 			{
-				free(buffer);
-				execve(argv[0], argv, NULL);
+				char *args[] = {buffer, NULL};
+				execv(args[0], args);
 			}
 			else
 			{
-				perror("access");
-				return (-1);
+				perror(buffer);
+				exit(EXIT_FAILURE);
 			}
 
 		}
@@ -53,4 +54,5 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 
 		}
 	}
+	free(buffer);
 }
