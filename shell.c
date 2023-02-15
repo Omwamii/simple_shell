@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <errno.h>
+#include <sys/wait.h>
 
 /**
   *main - entry point
@@ -12,14 +13,11 @@
   *Return: success value
   */
 
-int main(int ac, char **argv, __attribute__((unused)) char **envp)
+int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) char **envp)
 {
-	char *buffer, *buffer2;
-	struct stat sb;
-	int len = 0;
+	char *buffer;
+	size_t len = 0;
 	int nread;
-	char dir[] = "/usr/bin/";
-	char *agrv, *line_pos;
 
 	while (1)
 	{
@@ -28,13 +26,21 @@ int main(int ac, char **argv, __attribute__((unused)) char **envp)
 			nread = getline(&buffer, &len, stdin);
 			if (nread == -1)
 			{
-				fprintf(stderr, "Error reading input\n");
-				exit(EXIT_SUCCESS);
+				perror("getline");
+				exit(EXIT_FAILURE);
 			}
-			line_pos = strchr(buffer, '\n');
-			if (line_pos != NULL)
-				*line_pos = '\0';
-			strcat(dir, buffer);
+
+			if (access(buffer, X_OK) == 0)
+			{
+				free(buffer);
+				execve(argv[0], argv, NULL);
+			}
+			else
+			{
+				perror("access");
+				return (-1);
+			}
+
 		}
 		else
 		{
