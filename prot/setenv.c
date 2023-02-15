@@ -22,6 +22,12 @@ int _setenv(const char *name, const char *value, int overwrite)
 	}
 
 	newenv = malloc(name_len + val_len + 2); //allocate length for var_name, value '=' and '\0'
+	if (newenv == NULL)
+	{
+		fprintf(stderr, "Error: memory cannot be allocated");
+		exit(EXIT_FAILURE);
+	}
+
 	memcpy(newenv, name, name_len);
 	newenv[name_len] = '=';
 	memcpy(newenv, value, val_len);
