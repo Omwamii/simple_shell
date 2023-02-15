@@ -31,3 +31,16 @@ Node* build_path_list() {
     return head;
 }
 
+int main(void)
+{
+	Node *current = build_path_list();
+
+	while (current != NULL)
+	{
+		printf("%s\n", current->value);
+		current = current->next;
+	}
+
+	return (0);
+}
+

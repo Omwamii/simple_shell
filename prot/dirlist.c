@@ -9,23 +9,33 @@ typedef struct node
 	struct node *next;
 }node;
 
-int lists()
+node *build_list(void)
 {
 	node *head = NULL;
-	node *newnode, temp;
-	char *buffer, token, path;
+	node *newnode, *temp;
+	char *buffer, *token, *path;
 	size_t len;
 
 	path = getenv("PATH");
-	token = strdup(path);
+	token = strtok(path, ":");
 
-	while(token)
+	while (token)
 	{
-		len = sizeof(token) + 1;
+		len = strlen(token) + 1;
 		buffer = malloc(len);
+
+		if(buffer == NULL)
+		{
+			fprintf(stderr,"Error: cannot allocate memory");
+			exit(EXIT_FAILURE);
+		}
+
 		snprintf(buffer, len, "%s", token);
 
 		newnode = malloc(sizeof(node));
+		newnode->str = strdup(buffer);
+		newnode->next = NULL;
+
 		if (head == NULL)
 		{
 			head = newnode;
@@ -37,8 +47,24 @@ int lists()
 			temp = newnode;
 		}
 
-		strncpy(temp->str, buffer, len);
+		free(buffer);
+		token = strtok(NULL, ":");
 
 	}
 
+	return (head);
+
+}
+
+int main(void)
+{
+	node *current = build_list();
+
+	while(current != NULL)
+	{
+		printf("%s\n", current->str);
+		current = current->next;
+	}
+
+	return (0);
 }
