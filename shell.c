@@ -23,10 +23,10 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 	while (1)
 	{
 		printf("simple_shell$ ");
+		nread = getline(&buffer, &len, stdin);
 
 		if (fork() == 0)
 		{
-			nread = getline(&buffer, &len, stdin);
 			if (nread == -1)
 			{
 				perror("getline");
