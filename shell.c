@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <string.h>
 
 /**
   *main - entry point
@@ -15,12 +16,14 @@
 
 int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) char **envp)
 {
-	char *buffer;
+	char *buffer, *buf2;
 	size_t len = 0;
 	int nread;
 
 	while (1)
 	{
+		printf("simple_shell$ ");
+
 		if (fork() == 0)
 		{
 			nread = getline(&buffer, &len, stdin);
@@ -30,7 +33,9 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 				exit(EXIT_FAILURE);
 			}
 
-			if (access(buffer, X_OK) == 0)
+			buf2 = strtok(buffer, "\n");
+
+			if (access(buf2, X_OK) == 0)
 			{
 				free(buffer);
 				execve(argv[0], argv, NULL);
@@ -45,7 +50,6 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 		else
 		{
 			wait(NULL);
-			printf("simple_shell$");
 
 		}
 	}
