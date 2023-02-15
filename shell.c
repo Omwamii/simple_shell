@@ -28,10 +28,7 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 		if (fork() == 0)
 		{
 			if (nread == -1)
-			{
-				perror("getline");
-				exit(EXIT_FAILURE);
-			}
+				break;
 
 			if (buffer[nread - 1] == '\n')
 				buffer[nread - 1] = '\0';
