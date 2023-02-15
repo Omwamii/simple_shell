@@ -6,7 +6,7 @@
   *@ac: argument count
   *@av: string of arguments
   *
-  *Return: sucess value
+  *Return: success value
   */
 
 int main(__attribute__((unused)) int ac, __attribute__((unused)) char **av)
