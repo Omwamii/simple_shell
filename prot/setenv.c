@@ -1,37 +1,39 @@
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdlib.h>
 
 extern char **environ;
 
 int _setenv(const char *name, const char *value, int overwrite)
 {
-	char **newenv = environ;
-	int slen = strlen(getenv(name));
-	int name_len = strlen(name);
-	int i = 0;
-	int j = 0;
+	char *newenv, *oldenv;
+	int name_len, val_len;
 
-	while (newenv[j])
+	if (name == NULL || strchr(name, '=') != NULL || name[0] == '\0')
+		return (-1);
+
+	oldenv = getenv(name);
+	name_len = strlen(name);
+	val_len = strlen(value);
+
+	if (!overwrite && newenv != NULL)
 	{
-		if (strncmp(newenv[j], name, name_len) == 0 &&
-				*(newenv)[name_len] == '=')
-		{
-			if (overwrite)
-			{
-				while (value[i])
-		 		{
-					*(newenv)[name_len + i] = value[i];
-					i++;
-				}
-				return (0);
-			}
-
-		}
-		j++;
+		return (0); //variable exists & overwrite disabled
 	}
 
-	return (-1);
+	newenv = malloc(name_len + val_len + 2); //allocate length for var_name, value '=' and '\0'
+	memcpy(newenv, name, name_len);
+	newenv[name_len] = '=';
+	memcpy(newenv, value, val_len);
+	newenv[name_len + val_len + 1] = '\0';
+
+	if (putenv(newenv) != 0)
+	{
+		free(newenv);
+		return (-1);
+	}
+
+	return (0);
+
 
 }
