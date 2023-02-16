@@ -24,12 +24,14 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 	{
 		printf("simple_shell$ ");
 		nread = getline(&buffer, &len, stdin);
+		if (nread == -1)
+		{
+			printf("\n");
+			break;
+		}
 
 		if (fork() == 0)
 		{
-			if (nread == -1)
-				break;
-
 			if (buffer[nread - 1] == '\n')
 				buffer[nread - 1] = '\0';
 
