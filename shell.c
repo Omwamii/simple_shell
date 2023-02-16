@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <sys/wait.h>
-#include <string.h>
+#include "main.h"
 
 /**
   *main - entry point
@@ -16,14 +10,16 @@
 
 int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) char **envp)
 {
-	char *buffer, *args[100], *token;
+	char *buffer, *args[80], *token;
 	size_t len = 0;
 	int nread, argc = 0;
+	pid_t my_pid;
 
 	while (1)
 	{
 		printf("simple_shell$ ");
 		nread = getline(&buffer, &len, stdin);
+		fflush(stdout);
 
 		if (buffer[nread - 1] == '\n')
 		{
@@ -46,7 +42,15 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 
 		args[argc] = NULL;
 
-		if (fork() == 0)
+		if (_strcmp(argv[0], "exit") == 0 && (argv[1] == NULL))
+		{
+			printf("\n");
+			break;
+		}
+
+		my_pid = fork();
+
+		if (my_pid == 0)
 		{
 			if (nread == 1)
 				exit(0);
@@ -55,10 +59,9 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 			{
 				if (execve(args[0], args, NULL) == -1)
 				{
-					perror("execve");
+					perror(args[0]);
 					exit(EXIT_FAILURE);
 				}
-				exit(0);
 			}
 			else
 			{
@@ -66,6 +69,12 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 				exit(EXIT_FAILURE);
 			}
 
+		}
+
+		else if (my_pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
 		}
 		else
 		{

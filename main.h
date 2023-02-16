@@ -11,4 +11,6 @@
 
 int _size(char *str);
 char *strn_concat(char *s1, char *s2);
+int _strcmp(char *s1, char *s2);
 
+#endif
