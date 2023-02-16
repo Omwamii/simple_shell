@@ -16,7 +16,7 @@
 
 int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) char **envp)
 {
-	char *buffer, *buf2;
+	char *buffer;
 	size_t len = 0;
 	int nread;
 
@@ -32,6 +32,9 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 
 		if (fork() == 0)
 		{
+			if (nread == 1)
+				exit(0);
+
 			if (buffer[nread - 1] == '\n')
 				buffer[nread - 1] = '\0';
 
