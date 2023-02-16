@@ -16,32 +16,49 @@
 
 int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) char **envp)
 {
-	char *buffer;
+	char *buffer, *args[100], *token;
 	size_t len = 0;
-	int nread;
+	int nread, argc = 0;
 
 	while (1)
 	{
 		printf("simple_shell$ ");
 		nread = getline(&buffer, &len, stdin);
+
+		if (buffer[nread - 1] == '\n')
+		{
+			buffer[nread - 1] = '\0';
+		}
+
 		if (nread == -1)
 		{
 			printf("\n");
 			break;
 		}
 
+		token = strtok(buffer, " ");
+
+		while(token != NULL)
+		{
+			args[argc++] = token;
+			token = strtok(NULL, " ");
+		}
+
+		args[argc] = NULL;
+
 		if (fork() == 0)
 		{
 			if (nread == 1)
 				exit(0);
 
-			if (buffer[nread - 1] == '\n')
-				buffer[nread - 1] = '\0';
-
 			if (access(buffer, X_OK) == 0)
 			{
-				char *args[] = {buffer, NULL};
-				execv(args[0], args);
+				if (execve(args[0], args, NULL) == -1)
+				{
+					perror("execve");
+					exit(EXIT_FAILURE);
+				}
+				exit(0);
 			}
 			else
 			{
@@ -57,4 +74,6 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 		}
 	}
 	free(buffer);
+
+	return (0);
 }
