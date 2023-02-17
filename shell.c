@@ -17,6 +17,7 @@ int main(int ac, char **argv)
 	pid_t my_pid;
 	char **envp = environ;
 	ssize_t nread;
+	char *filepath;
 
 	while (1)
 	{
@@ -85,8 +86,14 @@ int main(int ac, char **argv)
 		if (strcmp(args[0], "exit") == 0 && (args[1] == NULL))
 			break;
 
-		my_pid = fork();
+		filepath = find_path(args[0]);
 
+		if (filepath == NULL)
+		{
+			perror(filepath);
+			continue;
+		}
+		my_pid = fork();
 		if (my_pid == 0)
 		{
 			if (execve(args[0], args, NULL) == -1)
@@ -105,6 +112,7 @@ int main(int ac, char **argv)
 		else
 		{
 			wait(NULL);
+			free(filepath);
 
 		}
 	}
