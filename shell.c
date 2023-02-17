@@ -91,12 +91,13 @@ int main(int ac, char **argv)
 		if (filepath == NULL)
 		{
 			perror(filepath);
+			printf(":(\n");
 			continue;
 		}
 		my_pid = fork();
 		if (my_pid == 0)
 		{
-			if (execve(args[0], args, NULL) == -1)
+			if (execve(filepath, args, NULL) == -1)
 			{
 				perror(args[0]);
 				exit(EXIT_FAILURE);
