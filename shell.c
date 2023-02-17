@@ -80,6 +80,7 @@ int main(int ac, char **argv)
 			{
 				printf("%s\n", envp[k++]);
 			}
+			continue;
 		}
 		if (strcmp(args[0], "exit") == 0 && (args[1] == NULL))
 			break;
