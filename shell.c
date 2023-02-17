@@ -49,7 +49,7 @@ int main(int ac, char **argv)
 
 		token_buf = strtok(buffer, " ");
 
-		while(token_buf != NULL)
+		while (token_buf != NULL)
 		{
 			token_count++;
 			token_buf = strtok(NULL, " ");
