@@ -7,13 +7,16 @@
   *
   *Return: success value
   */
+extern char **environ;
 
-int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) char **envp)
+int main(int ac, char **argv)
 {
-	char *buffer, *args[80], *token;
+	char *buffer, **args, *token, *token_buf, *buf2;
 	size_t len = 0;
-	int nread, argc = 0;
+	int k = 0, token_count = 0, i;
 	pid_t my_pid;
+	char **envp = environ;
+	ssize_t nread;
 
 	while (1)
 	{
@@ -29,43 +32,65 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 		if (nread == -1)
 		{
 			printf("\n");
-			break;
+			return (-1);
 		}
 
-		token = strtok(buffer, " ");
+		if (nread == 1)
+			continue;
 
-		while(token != NULL)
+		buf2 = strdup(buffer);
+
+		if (buf2 == NULL)
 		{
-			args[argc++] = token;
+			perror("strdup");
+			exit(EXIT_FAILURE);
+		}
+
+		token_buf = strtok(buffer, " ");
+
+		while(token_buf != NULL)
+		{
+			token_count++;
+			token_buf = strtok(NULL, " ");
+		}
+
+		token_count++;
+		args = malloc(sizeof(char *) * token_count);
+
+		if (args == NULL)
+		{
+			perror("malloc");
+			return (-1);
+		}
+
+		token = strtok(buf2, " ");
+
+		for (i = 0; token != NULL; i++)
+		{
+			args[i] = malloc(sizeof(char) * strlen(token));
+			strcpy(args[i], token);
 			token = strtok(NULL, " ");
 		}
 
-		args[argc] = NULL;
+		args[i] = NULL;
 
-		if (_strcmp(argv[0], "exit") == 0 && (argv[1] == NULL))
+		if (strcmp(args[0], "env") == 0 && (args[1] == NULL))
 		{
-			printf("\n");
-			break;
+			while (envp[k] != NULL)
+			{
+				printf("%s\n", envp[k++]);
+			}
 		}
+		if (strcmp(args[0], "exit") == 0 && (args[1] == NULL))
+			break;
 
 		my_pid = fork();
 
 		if (my_pid == 0)
 		{
-			if (nread == 1)
-				exit(0);
-
-			if (access(buffer, X_OK) == 0)
+			if (execve(args[0], args, NULL) == -1)
 			{
-				if (execve(args[0], args, NULL) == -1)
-				{
-					perror(args[0]);
-					exit(EXIT_FAILURE);
-				}
-			}
-			else
-			{
-				perror(buffer);
+				perror(args[0]);
 				exit(EXIT_FAILURE);
 			}
 
@@ -82,6 +107,8 @@ int main(__attribute__((unused)) int ac, char **argv, __attribute__((unused)) ch
 
 		}
 	}
+	free(buf2);
+	free(args);
 	free(buffer);
 
 	return (0);
