@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
   *main - entry point
@@ -11,7 +11,7 @@ extern char **environ;
 
 int main(int ac, char **argv)
 {
-	char *buffer, **args, *token, *token_buf, *buf2;
+	char *buffer, **args, *token, *buf2;
 	size_t len = 0;
 	int k = 0, token_count = 0, i;
 	pid_t my_pid;
@@ -47,12 +47,12 @@ int main(int ac, char **argv)
 			exit(EXIT_FAILURE);
 		}
 
-		token_buf = strtok(buffer, " ");
+		token = strtok(buffer, " ");
 
-		while (token_buf != NULL)
+		while (token != NULL)
 		{
 			token_count++;
-			token_buf = strtok(NULL, " ");
+			token = strtok(NULL, " ");
 		}
 
 		token_count++;
@@ -90,10 +90,10 @@ int main(int ac, char **argv)
 
 		if (filepath == NULL)
 		{
-			perror(filepath);
-			printf(":(\n");
+			perror(args[0]);
 			continue;
 		}
+
 		my_pid = fork();
 		if (my_pid == 0)
 		{
@@ -113,7 +113,8 @@ int main(int ac, char **argv)
 		else
 		{
 			wait(NULL);
-			free(filepath);
+			if (strcmp(filepath, args[0]) != 0)
+				free(filepath);
 
 		}
 	}
