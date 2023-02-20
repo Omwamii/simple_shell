@@ -13,7 +13,7 @@ int main(int ac, char **argv)
 {
 	char *buffer, **args, *token, *buf2;
 	size_t len = 0;
-	int k = 0, token_count = 0, i;
+	int k = 0, token_count = 0, i, exit_status;
 	pid_t my_pid;
 	char **envp = environ;
 	ssize_t nread;
@@ -21,14 +21,9 @@ int main(int ac, char **argv)
 
 	while (1)
 	{
-		printf("simple_shell$ ");
+		print_prompt("simple_shell$ ");
 		nread = getline(&buffer, &len, stdin);
 		fflush(stdout);
-
-		if (buffer[nread - 1] == '\n')
-		{
-			buffer[nread - 1] = '\0';
-		}
 
 		if (nread == -1)
 		{
@@ -38,18 +33,20 @@ int main(int ac, char **argv)
 
 		if (nread == 1)
 			continue;
+		if (buffer[nread - 1] == '\n')
+			buffer[nread - 1] = '\0';
 
 		buf2 = strdup(buffer);
 
 		if (buf2 == NULL)
 		{
-			perror("strdup");
+			perror("Error");
 			exit(EXIT_FAILURE);
 		}
 
 		token = strtok(buffer, " ");
 
-		while (token != NULL)
+		while (token != NULL) // "i am ian"
 		{
 			token_count++;
 			token = strtok(NULL, " ");
@@ -60,7 +57,7 @@ int main(int ac, char **argv)
 
 		if (args == NULL)
 		{
-			perror("malloc");
+			perror("Error");
 			return (-1);
 		}
 
@@ -83,8 +80,16 @@ int main(int ac, char **argv)
 			}
 			continue;
 		}
-		if (strcmp(args[0], "exit") == 0 && (args[1] == NULL))
-			break;
+		if (strcmp(args[0], "exit") == 0)
+		{
+			if (args[1] == NULL)
+				exit(0);
+			else
+			{
+				exit_status = atoi(args[1]);
+				exit(exit_status);
+			}
+		}
 
 		filepath = find_path(args[0]);
 
@@ -107,7 +112,7 @@ int main(int ac, char **argv)
 
 		else if (my_pid == -1)
 		{
-			perror("fork");
+			perror("Error");
 			exit(EXIT_FAILURE);
 		}
 		else

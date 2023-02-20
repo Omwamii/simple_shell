@@ -1,1 +1,1 @@
-All preliminary files used to test concepts
+Some preliminary files used to test concepts

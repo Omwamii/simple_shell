@@ -1,83 +1,62 @@
 #include "shell.h"
 
 /**
-  *_size - finds size of string
-  *@str: string pointer
-  *
-  *Return: size of string
+  *print_prompt - prints CL prompt
+  *@s: string to print to prompt
   */
 
-int _size(char *str)
+void print_prompt(char *s) //"simple_shell$ "
 {
-	if (str == NULL)
+	write(1, s, strlen(s));
+}
+
+/**
+  *_strtok - tokenizes a string to individual strings
+  *@str: string passed
+  *@delim
+  *
+  *Return: pointer to tokenized string
+  */
+
+char *_strtok(char *str, const char *delim)
+{
+	static int current_pos = 0; //initial position    "i\0am ian "
+	char *token;
+	int i = 0; //position
+
+	if (str != NULL)
 	{
-		return (0);
-	}
-	else
-	{
-		int i = 0;
+		token = str;
 
 		while (str[i] != '\0')
 		{
+			if (str[i] == *delim)
+			{
+				str[i] = '\0';
+				current_pos++; //point to the next token
+				return (str); // return token?
+			}
 			i++;
+			current_pos++;
 		}
-		return (i);
+
+		return (NULL);
 	}
-}
-/**
-  *str_concat - concatenates two strings
-  *@s1: first str ptr
-  *@s2: second str ptr
-  *
-  *Return: ptr to new concatenated str
-  */
-
-char *strn_concat(char *s1, char *s2)
-{
-	int size1 = _size(s1);
-	int size2 = _size(s2);
-	int size3 = size1 + size2;
-	int i = 0;
-	int j, k;
-	char *dest  = malloc((sizeof(char) * size3) + 1);
-
-	if (dest != NULL)
+	else //str is null
 	{
-		for (; i < size1; i++)
-			dest[i] = s1[i];
-
-		for (j = i, k = 0; k < size2; j++, k++)
-			dest[j] = s2[k];
-
-		dest[j + 1] = '\0';
-
-		return (dest);
+		token = str + current_pos; // str = str + inital -- increment pointer.
+		i = current_pos;
+		while (str[current_pos] != '\0') //check for '\0'
+		{
+			if (str[current_pos] == *delim)
+			{
+				str[current_pos] = '\0';
+				current_pos++;
+				return (token);
+			}
+			current_pos++;
+		}
+		return (NULL);
 	}
-
-	return (NULL);
-}
-
-/**
-  *_strcmp - compares strings
-  *@s1: string 1
-  *@s2: string 2
-  *Return: o if equal, greater than 0 if greater
-  *less if less than
-  */
-
-int _strcmp(char *s1, char *s2)
-{
-	int count, comp;
-
-	count = 0;
-
-	while (s1[count] == s2[count] && s1[count] != '\0')
-	{
-		count++;
-	}
-
-	comp = s1[count] - s2[count];
-
-	return (comp);
 }
 
