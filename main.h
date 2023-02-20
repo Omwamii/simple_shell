@@ -13,6 +13,8 @@
 int _size(char *str);
 char *strn_concat(char *s1, char *s2);
 int _strcmp(char *s1, char *s2);
-char *find_path(const char *filename); 
+char *find_path(const char *filename);
+unsigned int is_delim(char c, char *delim);
+char *_strtok(char *s, char d);
 
 #endif
