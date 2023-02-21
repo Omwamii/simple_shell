@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
   *_size - finds size of string

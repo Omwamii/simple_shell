@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
   *find_path - finds if file is in $PATH
@@ -7,9 +7,9 @@
   *Return: pointer to file string
   */
 
-char *find_path(const char *filename)
+char *find_path(char *filename)
 {
-	const char *path;
+	char *path, file_copy;
 	char *path_copy, *dir;
 	char *file;
 
@@ -18,6 +18,9 @@ char *find_path(const char *filename)
 	  perror(filename);
 	  return (NULL);
   }
+
+  if (access(filename, F_OK) == 0)
+	  return (filename); //no need to free?
 
   path = getenv("PATH");
   path_copy = strdup(path);
@@ -30,7 +33,6 @@ char *find_path(const char *filename)
 
     if (access(file, F_OK) == 0)
     {
-	    //need to free file in main?
 	    free(path_copy);
 	    return (file);
     }

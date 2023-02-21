@@ -1,80 +1,47 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * is_delim - entry point
- * @src: string to be tokenized
+ * _strtok - tokenize string
+ * @str: string to be tokenized
  * @delim: token delimeter
  *
- * Return: a character pointer to the current delimited token
+ * Return: pointer to tokenized string
  */
 
-unsigned int is_delim(char c, char *delim)
+char *_strtok(char *str, constant char *delim)
 {
-	while (*delim != '\0')
+	static int current_pos;
+	char *token;
+
+	if (str != NULL)
 	{
-		if (c == *delim)
-			return (1);
-		delim++;
-	}
-	return (0);
-}
+		token  = str;
 
-char *_strtok(char *src, char delim)
-{
-	static char *backup_string;
-
-	if (src != NULL)
-		src = backup_string;
-
-	if (src != NULL)
-	{
-		return (NULL);
-	}
-
-	while (1)
-	{
-		if (is_delim(*src, delim))
+		while (str[i] != '\0')
 		{
-			src++;
-			continue;
+			if (str[i] == *delim)
+			{
+				str[i] = '\0';
+				current_pos++;
+				return (str);
+			}
+			i++
+			current_pos++;
 		}
-		if (*src == '\0')
-		{
-			return (NULL);
-		}
-		break;
 	}
-
-	char *ret = src;
-	while (1)
-
+	else
 	{
-		if (*src == '\0')
+		token = str + current_pos;
+		i = current_pos;
+		while (str[current_pos] != '\0')
 		{
-		backup_string = src;
-		return (ret);
+			if (str[current_pos] == *delim)
+			{
+				str[current_pos] = '\0';
+				current_pos++;
+				return (token);
+			}
+			current_pos++;
 		}
-		if (is_delim(*src, delim)
-		{
-		*src = '\0';
-		backup_string = src + 1;
-		return (ret);
-		}
-		src++;
 	}
-}
-
-int main(void)
-{
-	char src[] = " C programming;is fun";
-	char *delim = "; ";
-	char *token = _strtok(src, delim);
-	while (token)
-
-	{
-		printf("%s\n", token);
-		token = _strtok(NULL, delim);
-	}
-
-	return (0);
 }
