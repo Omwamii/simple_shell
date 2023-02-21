@@ -11,9 +11,10 @@ int main(int argc, char* argv[]) {
 
   char* path = getenv("PATH");
   char* path_copy = strdup(path);
-
   char* token = strtok(path_copy, ":");
-  while (token) {
+
+  while (token)
+  {
     for (int i = 1; i < argc; i++) {
       char buffer[1024];
       sprintf(buffer, "%s/%s", token, argv[i]);
