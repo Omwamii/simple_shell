@@ -12,31 +12,44 @@
 
 #define BUFF_SIZE 1024
 #define CHUNK_SIZE 256
+extern char **environ;
 
 int _size(char *str);
 char *strn_concat(char *s1, char *s2);
 int _strcmp(char *s1, char *s2);
-<<<<<<< HEAD:main.h
-char *find_path(const char *filename);
-char *_strtok(char *str, const char *delim);
-=======
-char *find_path(char *filename); 
+char *find_path(char *filename);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
-<<<<<<< HEAD
->>>>>>> b08308c50bcb33a6e534596dbd60f701b1808a73:shell.h
-=======
 void print_prompt(char *s);
 char *_strtok(char *str, const char *delim);
-int handle_cd(char **args);
-int handle_exit(char **args);
-int handle_setenv(char **args);
-int handle_unsetenv(char **args);
 
+/**
+  *struct builtins - has builtins and handlers
+  *@name: name of the builtin
+  *@handler: handler fn
+  */
+typedef struct builtins
+{
+	char *name;
+	void (*handler)(char **);
+} builtins;
+
+void handle_cd(char **args);
+void handle_exit(char **args);
+void handle_setenv(char **args);
+void handle_unsetenv(char **args);
+void handle_env(char **args);
+void execute(char *filename, char **args);
+void (*check_builtin(char *command))(char **args);
+int _setenv(const char *name, const char *value, int overwrite);
+int _unsetenv(const char *name);
+/**
+  *struct aliases - a struct of aliases
+  *@alias_name: name of alias
+  *@real_name: real cmd name
+  */
 typedef struct aliases
 {
 	char *alias_name;
 	char *real_name;
-}alias;
->>>>>>> 410787931b0e9d4e213f766925124119ba1a1a69
-
+} alias;
 #endif

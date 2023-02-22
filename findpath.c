@@ -13,35 +13,32 @@ char *find_path(char *filename)
 	char *path_copy, *dir;
 	char *file;
 
-  if (filename == NULL)
-  {
-	  perror(filename);
-	  return (NULL);
-  }
+	if (filename == NULL)
+	{
+		perror(filename);
+		return (NULL);
+	}
 
-  if (access(filename, F_OK) == 0)
-	  return (filename); //no need to free?
+	if (access(filename, F_OK) == 0) /*complete path was given*/
+		return (filename);
 
-  path = getenv("PATH");
-  path_copy = strdup(path);
+	path = getenv("PATH");
+	path_copy = strdup(path);
+	dir = strtok(path_copy, ":");
 
-  dir = strtok(path_copy, ":");
-  while (dir != NULL)
-  {
-    file = malloc(strlen(filename) + strlen(dir) + 2);
-    sprintf(file,"%s/%s", dir, filename);
+	while (dir != NULL)
+	{
+		file = malloc(strlen(filename) + strlen(dir) + 2);
+		sprintf(file, "%s/%s", dir, filename);
 
-    if (access(file, F_OK) == 0)
-    {
-	    free(path_copy);
-	    return (file);
-    }
-
-    free(file);
-    dir = strtok(NULL, ":");
-  }
-
-  free(path_copy);
-  return (NULL);
+		if (access(file, F_OK) == 0)
+		{
+			free(path_copy);
+			return (file);
+		}
+		free(file);
+		dir = strtok(NULL, ":");
+	}
+	free(path_copy);
+	return (NULL);
 }
-

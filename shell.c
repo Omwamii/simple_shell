@@ -1,28 +1,25 @@
 #include "shell.h"
-
 /**
-  *main - entry point
-  *@ac: argument count
-  *@argv: arguments list
-  *
-  *Return: success value
-  */
-extern char **environ;
+ *main - entry point
+ *@ac: argument count
+ *@argv: arguments list
+ *
+ *Return: success value
+ */
 
 int main(int ac, char **argv)
 {
-	char *buffer, **args, *token, *buf2;
+	char *buffer, **args, *token, *buf2, *filepath;
 	size_t len = 0;
-	int k = 0, token_count = 0, i, exit_status;
-	pid_t my_pid;
-	char **envp = environ;
+	int k = 0, token_count = 0, i, exit_status, is_bin;
+	pid_t my_pid; /* removed envp = environ */
 	ssize_t nread;
-	char *filepath;
+	void (*f)(char **) = NULL;
 
 	while (1)
 	{
 		print_prompt("simple_shell$ ");
-		nread = getline(&buffer, &len, stdin);
+		nread = _getline(&buffer, &len, stdin);
 		fflush(stdout);
 
 		if (nread == -1)
@@ -33,9 +30,11 @@ int main(int ac, char **argv)
 
 		if (nread == 1)
 			continue;
+
 		if (buffer[nread - 1] == '\n')
 			buffer[nread - 1] = '\0';
 
+		/* add function to tokenize? */
 		buf2 = strdup(buffer);
 
 		if (buf2 == NULL)
@@ -46,7 +45,7 @@ int main(int ac, char **argv)
 
 		token = strtok(buffer, " ");
 
-		while (token != NULL) // "i am ian"
+		while (token != NULL) /* end not reached */
 		{
 			token_count++;
 			token = strtok(NULL, " ");
@@ -72,25 +71,12 @@ int main(int ac, char **argv)
 
 		args[i] = NULL;
 
-		if (strcmp(args[0], "env") == 0 && (args[1] == NULL))
+		f = check_builtin(args[0]);
+		if (f != NULL)
 		{
-			while (envp[k] != NULL)
-			{
-				printf("%s\n", envp[k++]);
-			}
+			f(args);
 			continue;
 		}
-		if (strcmp(args[0], "exit") == 0)
-		{
-			if (args[1] == NULL)
-				exit(0);
-			else
-			{
-				exit_status = atoi(args[1]);
-				exit(exit_status);
-			}
-		}
-
 		filepath = find_path(args[0]);
 
 		if (filepath == NULL)
@@ -99,33 +85,17 @@ int main(int ac, char **argv)
 			continue;
 		}
 
-		my_pid = fork();
-		if (my_pid == 0)
-		{
-			if (execve(filepath, args, NULL) == -1)
-			{
-				perror(args[0]);
-				exit(EXIT_FAILURE);
-			}
-
-		}
-
-		else if (my_pid == -1)
-		{
-			perror("Error");
-			exit(EXIT_FAILURE);
-		}
 		else
 		{
-			wait(NULL);
-			if (strcmp(filepath, args[0]) != 0)
+			execute(filepath, args); /* Return or just exec? */
+			if (strcmp(filepath, args[0]) != 0) /* will exec allow? */
 				free(filepath);
-
 		}
 	}
 	free(buf2);
 	free(args);
 	free(buffer);
+	/* free(filepath); - for the purpose of using filepath in another fn*/
 
 	return (0);
 }
