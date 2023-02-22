@@ -3,13 +3,13 @@
 /**
   *find_path - finds if file is in $PATH
   *@filename: file to search
-
-  *Return: pointer to file string
+  *
+  * Return: pointer to file string
   */
 
 char *find_path(char *filename)
 {
-	char *path, file_copy;
+	char *path;
 	char *path_copy, *dir;
 	char *file;
 
