@@ -34,6 +34,7 @@ typedef struct builtins
 } builtins;
 
 void handle_cd(char **args);
+void handle_cd2(char *curdir, char *olddir);
 void handle_exit(char **args);
 void handle_setenv(char **args);
 void handle_unsetenv(char **args);
