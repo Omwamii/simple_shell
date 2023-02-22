@@ -8,22 +8,63 @@
   */
 void handle_cd(char **args)
 {
-	char lastdir[1024];
+	char *old_dir, *cur_dir;
+	int size = 0;
 
+	old_dir = getcwd(NULL, size);
 	if (args[1] == NULL)
 	{
 		if (chdir(getenv("HOME")) != 0)
-			perror("Cannot change directory to home");
+		{
+			perror("Cannot change to /home");
+			free(old_dir);
+		}
+		cur_dir = getcwd(NULL, size);
+		if (cur_dir == NULL)
+		{
+			perror("Can't get current directory");
+			free(old_dir);
+		}
+		setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
 	}
 
 	else
 	{
-		if (chdir(args[1]) != 0)
+		if (strcmp(args[1], "-") == 0)
 		{
-			perror(args[1]); /* not such dir */
+			if (chdir(getenv("OLDPWD")) != 0)
+			{
+				perror("Cannot change to previous dir");
+				free(old_dir);
+			}
+			cur_dir = getcwd(NULL, size);
+			if (cur_dir == NULL)
+			{
+				perror("Cannot get current dir");
+				free(old_dir);
+			}
+			setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
+			printf("%s\n", cur_dir);
+		}
+
+		else
+		{
+			if (chdir(args[1]) != 0)
+			{
+				perror("Unable to change directory");
+				free(old_dir); /* should exit? */
+			}
+
+			cur_dir = getcwd(NULL, size);
+			if (cur_dir == NULL)
+			{
+				perror("Cannot get current directory");
+				free(old_dir);
+			}
+			setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
 		}
 	}
-
+	free(old_dir), free(cur_dir);
 }
 
 /**
