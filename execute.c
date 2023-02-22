@@ -54,3 +54,55 @@ void execute(char *filepath, char **args)
 
 	}
 }
+
+/**
+  *execute_single - execute when single command is passed
+  *@buffer: arguments string for single cmd
+  */
+void execute_single(char *buffer)
+{
+	char *filepath, **args;
+	void (*f)(char **);
+
+	args = tokenize(buffer, " \n");
+	if (args == NULL)
+		perror("unable to tokenize");
+	else
+	{
+		f = check_builtin(args[0]);
+		if (f != NULL)
+			f(args);
+		else
+		{
+			filepath = find_path(args[0]);
+			if (filepath == NULL) /* command is not found */
+				perror(args[0]);
+			else
+			{
+				execute(filepath, args); /* Execute the command */
+				if (strcmp(filepath, args[0]) != 0)
+					free(filepath);
+			}
+		}
+
+		free(args);
+	}
+
+}
+
+/**
+  *execute_multiple - execute multiple commands sequentially
+  *@cmds: array of multiple commands
+  */
+void execute_multiple(char **cmds)
+{
+	char **cmd = cmds;
+	int i = 0;
+
+	while (cmd[i] != NULL) //ls -l ; echo "me")
+	{
+		execute_single(cmd[i]);
+		i++;
+	}
+
+}

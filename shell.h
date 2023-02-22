@@ -44,6 +44,8 @@ void (*check_builtin(char *command))(char **args);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
 char **tokenize(char *buffer, const char *delim);
+void execute_single(char *buffer);
+void execute_multiple(char **cmds);
 /**
   *struct aliases - a struct of aliases
   *@alias_name: name of alias

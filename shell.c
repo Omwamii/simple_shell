@@ -9,9 +9,8 @@
 
 int main(int ac, char **argv)
 {
-	char *buffer, **args, *filepath;
+	char *buffer, *buf2,  **cmds;
 	ssize_t nread, len = 0;
-	void (*f)(char **) = NULL;
 
 	while (1)
 	{
@@ -24,28 +23,18 @@ int main(int ac, char **argv)
 		}
 		if (nread == 1)
 			continue;
-		args = tokenize(buffer, " \n");
-		if (args == NULL)
-		{
-			perror("unable to tokenize");
-			continue;
-		}
-		f = check_builtin(args[0]);
-		if (f != NULL)
-		{
-			f(args);
-			continue;
-		}
-		filepath = find_path(args[0]);
-		if (filepath == NULL) /* command is not found */
-		{
-			perror(args[0]);
-			continue;
-		}
-		execute(filepath, args); /* Execute the command */
-		if (strcmp(filepath, args[0]) != 0)
-			free(filepath);
+
+		buf2 = strdup(buffer);
+		cmds = tokenize(buffer, ";");
+		if (cmds == NULL)
+			execute_single(buf2); /* execute single command */
+		else
+			execute_multiple(cmds); /* multiple commands using ';' */
+
+		free(cmds);
+
 	}
-	free(args), free(buffer);
+	free(buffer);
+	free(buf2);
 	return (0);
 }

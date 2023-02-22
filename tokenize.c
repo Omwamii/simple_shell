@@ -2,7 +2,7 @@
 
 /**
   *tokenize - tokenizes argument string to tokens
-  *@buffer: buffer passed by main
+  *@buffer: buffer passed
   *@delim: delimiter to use to separate tokens
   *
   *Return: array of tokens or NULL if fails
