@@ -20,37 +20,45 @@ void print_prompt(char *s)
 
 char *_strtok(char *str, const char *delim)
 {
-	static char *current_pos;
-	char *token;
+	static char *splitted, *str_end;
+	char *str_start;
+	unsigned int i, bool;
 
 	if (str != NULL)
 	{
-		current_pos = str;
+		if (cmp_chars(str, delim))
+			return (NULL);
+		splitted = str; /*Store first address*/
+		i = strlen(str);
+		str_end = &str[i]; /*Store last address*/
 	}
+	str_start = splitted;
+	if (str_start == str_end) /*Reaching the end*/
+		return (NULL);
 
-	token = current_pos;
-	while (*current_pos != '\0')
+	for (bool = 0; *splitted; splitted++)
 	{
-		if (*current_pos == *delim)
+		/*Breaking loop finding the next token*/
+		if (splitted != str_start)
+			if (*splitted && *(splitted - 1) == '\0')
+				break;
+		/*Replacing delimiter for null char*/
+		for (i = 0; delim[i]; i++)
 		{
-			*current_pos = '\0';
-			current_pos++;
-			if (token != current_pos)
+			if (*splitted == delim[i])
 			{
-				return (token);
-			}
-			else
-			{
-				token = current_pos;
+				*splitted = '\0';
+				if (splitted == str_start)
+					str_start++;
+				break;
 			}
 		}
-		else
-		{
-			current_pos++;
-		}
+		if (bool == 0 && *splitted) /*Str != Delim*/
+			bool = 1;
 	}
-
-	return (token);
+	if (bool == 0) /*Str == Delim*/
+		return (NULL);
+	return (str_start);
 }
 
 /* unused function */
@@ -64,17 +72,16 @@ char *_strtok(char *str, const char *delim)
   */
 int _setenv(const char *name, const char *value, int overwrite)
 {
-	char *newenv;
+	char *newenv = NULL;
 	int name_len, val_len;
 
 	if (name == NULL || strchr(name, '=') != NULL || name[0] == '\0')
 		return (-1);
 
-	oldenv = getenv(name);
 	name_len = strlen(name);
 	val_len = strlen(value);
 
-	if (!overwrite && newenv != NULL)
+	if (!overwrite)
 	{
 		return (0); /*variable exists & overwrite disabled*/
 	}
@@ -111,7 +118,7 @@ int _setenv(const char *name, const char *value, int overwrite)
   */
 int _unsetenv(const char *name)
 {
-	int index = 0, unset = 0;
+	int index = 0;
 	size_t name_len;
 	char **envp = environ;
 
@@ -126,14 +133,12 @@ int _unsetenv(const char *name)
 				envp[index] = envp[index + 1];
 				index++;
 			}
-			unset = 1;
 			return (0);
 		}
 		index++;
 		envp++;
 	}
-	if (!unset)
-		return (-1);
+	return (-1);
 }
 
 /**
@@ -141,7 +146,7 @@ int _unsetenv(const char *name)
   *@olddir: path to the old directory before changing
   *@curdir: path to current directory after changing
   */
-void handle_cd2(char *curdir, char *olddir)
+void handle_cd2(__attribute__((unused)) char *curdir, char *olddir)
 {
 	char *cur_dir = cur_dir, *old_dir = olddir;
 	size_t size = 0;
@@ -154,7 +159,10 @@ void handle_cd2(char *curdir, char *olddir)
 		if (cur_dir == NULL)
 			perror("Error"); /* can't get current */
 		else
-			setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
+		{
+			setenv("OLDPWD", old_dir, 1);
+			setenv("PWD", cur_dir, 1);
+		}
 	}
 }
 

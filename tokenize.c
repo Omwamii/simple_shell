@@ -19,11 +19,11 @@ char **tokenize(char *buffer, const char *delim)
 		perror("Error");
 		return (NULL);
 	}
-	token = _strtok(buffer, delim);
+	token = strtok(buffer, delim);
 	while (token != NULL) /* end not reached */
 	{
 		token_count++;
-		token = _strtok(NULL, delim);
+		token = strtok(NULL, delim);
 	}
 
 	token_count++;
@@ -35,13 +35,13 @@ char **tokenize(char *buffer, const char *delim)
 		return (NULL);
 	}
 
-	token = _strtok(buf2, delim);
+	token = strtok(buf2, delim);
 
 	for (i = 0; token != NULL; i++)
 	{
 		args[i] = malloc(sizeof(char) * strlen(token));
 		strcpy(args[i], token);
-		token = _strtok(NULL, delim);
+		token = strtok(NULL, delim);
 	}
 
 	args[i] = NULL;
