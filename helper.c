@@ -17,8 +17,7 @@ void print_prompt(char *s)
   *
   *Return: pointer to tokenized string
   */
-
-char *_strtok(char *str, const char *delim)
+char *_strtok(char* str, const char* delim)
 {
 	static char *current_pos;
 	char *token;
@@ -52,6 +51,7 @@ char *_strtok(char *str, const char *delim)
 
 	return (token);
 }
+
 
 /* unused function */
 /**

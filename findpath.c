@@ -9,7 +9,7 @@
 
 char *find_path(char *filename)
 {
-	char *path, file_copy;
+	char *path;
 	char *path_copy, *dir;
 	char *file;
 
