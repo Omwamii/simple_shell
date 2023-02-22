@@ -34,6 +34,7 @@ typedef struct builtins
 } builtins;
 
 void handle_cd(char **args);
+void handle_cd2(char *curdir, char *olddir);
 void handle_exit(char **args);
 void handle_setenv(char **args);
 void handle_unsetenv(char **args);
@@ -42,6 +43,7 @@ void execute(char *filename, char **args);
 void (*check_builtin(char *command))(char **args);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
+char **tokenize(char *buffer, const char *delim);
 /**
   *struct aliases - a struct of aliases
   *@alias_name: name of alias

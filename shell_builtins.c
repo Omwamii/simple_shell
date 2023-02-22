@@ -9,62 +9,45 @@
 void handle_cd(char **args)
 {
 	char *old_dir, *cur_dir;
-	int size = 0;
 
-	old_dir = getcwd(NULL, size);
+	old_dir = getcwd(NULL, 0);
 	if (args[1] == NULL)
-	{
-		if (chdir(getenv("HOME")) != 0)
-		{
-			perror("Cannot change to /home");
-			free(old_dir);
-		}
-		cur_dir = getcwd(NULL, size);
-		if (cur_dir == NULL)
-		{
-			perror("Can't get current directory");
-			free(old_dir);
-		}
-		setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
-	}
-
+		handle_cd2(cur_dir, old_dir); /* handler for no arg */
 	else
 	{
 		if (strcmp(args[1], "-") == 0)
 		{
 			if (chdir(getenv("OLDPWD")) != 0)
+				perror("cd"); /* can't change to previous */
+			else
 			{
-				perror("Cannot change to previous dir");
-				free(old_dir);
+				cur_dir = getcwd(NULL, 0);
+				if (cur_dir == NULL)
+					perror("Error");/* can't get current */
+				else
+				{
+					setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
+					printf("%s\n", cur_dir);
+				}
 			}
-			cur_dir = getcwd(NULL, size);
-			if (cur_dir == NULL)
-			{
-				perror("Cannot get current dir");
-				free(old_dir);
-			}
-			setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
-			printf("%s\n", cur_dir);
 		}
-
 		else
 		{
 			if (chdir(args[1]) != 0)
+				perror("cd");
+			else
 			{
-				perror("Unable to change directory");
-				free(old_dir); /* should exit? */
+				cur_dir = getcwd(NULL, 0);
+				if (cur_dir == NULL)
+					perror("Error"); /* can't get current */
+				else
+					setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
 			}
-
-			cur_dir = getcwd(NULL, size);
-			if (cur_dir == NULL)
-			{
-				perror("Cannot get current directory");
-				free(old_dir);
-			}
-			setenv("OLDPWD", old_dir, 1), setenv("PWD", cur_dir, 1);
 		}
 	}
-	free(old_dir), free(cur_dir);
+	free(old_dir);
+	if (!cur_dir)
+		free(cur_dir);
 }
 
 /**
@@ -99,8 +82,6 @@ void handle_setenv(char **args)
 {
 	if (setenv(args[1], args[2], 1) == -1)
 		perror("Unable to set variable");
-	else
-		printf("Variable set\n");
 }
 
 /**
@@ -113,8 +94,6 @@ void handle_unsetenv(char **args)
 {
 	if (unsetenv(args[1]) != 0)
 		perror("variable not found");
-	else
-		printf("Variable unset\n");
 
 } /* need to check if variable set */
 
