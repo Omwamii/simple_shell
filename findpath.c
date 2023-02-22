@@ -3,7 +3,7 @@
 /**
   *find_path - finds if file is in $PATH
   *@filename: file to search
-  *
+
   *Return: pointer to file string
   */
 

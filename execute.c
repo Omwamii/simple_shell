@@ -99,7 +99,7 @@ void execute_multiple(char **cmds)
 	char **cmd = cmds;
 	int i = 0;
 
-	while (cmd[i] != NULL) //ls -l ; echo "me")
+	while (cmd[i] != NULL)
 	{
 		execute_single(cmd[i]);
 		i++;
