@@ -17,47 +17,40 @@ void print_prompt(char *s)
   *
   *Return: pointer to tokenized string
   */
+
 char *_strtok(char *str, const char *delim)
 {
-	static char *splitted, *str_end;
-	char *str_start;
-	unsigned int i, bool;
+	static char *current_pos;
+	char *token;
 
 	if (str != NULL)
 	{
-		if (cmp_chars(str, delim))
-			return (NULL);
-		splitted = str; /*Store first address*/
-		i = strlen(str);
-		str_end = &str[i]; /*Store last address*/
+		current_pos = str;
 	}
-	str_start = splitted;
-	if (str_start == str_end) /*Reaching the end*/
-		return (NULL);
 
-	for (bool = 0; *splitted; splitted++)
+	token = current_pos;
+	while (*current_pos != '\0')
 	{
-		/*Breaking loop finding the next token*/
-		if (splitted != str_start)
-			if (*splitted && *(splitted - 1) == '\0')
-				break;
-		/*Replacing delimiter for null char*/
-		for (i = 0; delim[i]; i++)
+		if (*current_pos == *delim)
 		{
-			if (*splitted == delim[i])
+			*current_pos = '\0';
+			current_pos++;
+			if (token != current_pos)
 			{
-				*splitted = '\0';
-				if (splitted == str_start)
-					str_start++;
-				break;
+				return (token);
+			}
+			else
+			{
+				token = current_pos;
 			}
 		}
-		if (bool == 0 && *splitted) /*Str != Delim*/
-			bool = 1;
+		else
+		{
+			current_pos++;
+		}
 	}
-	if (bool == 0) /*Str == Delim*/
-		return (NULL);
-	return (str_start);
+
+	return (token);
 }
 
 /* unused function */
@@ -71,7 +64,7 @@ char *_strtok(char *str, const char *delim)
   */
 int _setenv(const char *name, const char *value, int overwrite)
 {
-	char *newenv, *oldenv;
+	char *newenv;
 	int name_len, val_len;
 
 	if (name == NULL || strchr(name, '=') != NULL || name[0] == '\0')
