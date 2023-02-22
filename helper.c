@@ -20,44 +20,37 @@ void print_prompt(char *s)
 
 char *_strtok(char *str, const char *delim)
 {
-	static int current_pos; /* keep track of token pos */
+	static char *current_pos;
 	char *token;
-	int i = 0; /*temporary position */
 
 	if (str != NULL)
 	{
-		token = str;
-
-		while (str[i] != '\0')
-		{
-			if (str[i] == *delim)
-			{
-				str[i] = '\0';
-				current_pos++; /*point to the next token*/
-				return (str); /* return token? */
-			}
-			i++;
-			current_pos++;
-		}
-
-		return (NULL);
+		current_pos = str;
 	}
-	else /* str is null */
+
+	token = current_pos;
+	while (*current_pos != '\0')
 	{
-		token = str + current_pos; /*str = str + inital -- increment pointer.*/
-		i = current_pos;
-		while (str[current_pos] != '\0') /*check for '\0'*/
+		if (*current_pos == *delim)
 		{
-			if (str[current_pos] == *delim)
+			*current_pos = '\0';
+			current_pos++;
+			if (token != current_pos)
 			{
-				str[current_pos] = '\0';
-				current_pos++;
 				return (token);
 			}
+			else
+			{
+				token = current_pos;
+			}
+		}
+		else
+		{
 			current_pos++;
 		}
-		return (NULL);
 	}
+
+	return (token);
 }
 
 /* unused function */
