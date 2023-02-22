@@ -26,7 +26,6 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			buffer = realloc(buffer, buffer_size);
 		}
 		read_chunk = malloc(CHUNK_SIZE);  /*to read input in chunks*/
-
 		read_count = read(fileno(stream), read_chunk, CHUNK_SIZE);
 		if (read_count == -1) /*Read error*/
 		{
@@ -51,7 +50,6 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			if (current_pos == buffer_size)
 				buffer_size += BUFF_SIZE, buffer = realloc(buffer, buffer_size);
 		}
-
 		free(read_chunk);
 	}
 }

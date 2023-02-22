@@ -7,7 +7,7 @@
  *Return: success value
  */
 
-int main(__attribute__((unused)) int ac,__attribute__((unused)) char **argv)
+int main(__attribute__((unused)) int ac, __attribute__((unused)) char **argv)
 {
 	char *buffer, *buf2,  **cmds;
 	ssize_t nread;
