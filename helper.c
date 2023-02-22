@@ -64,7 +64,7 @@ char *_strtok(char *str, const char *delim)
   */
 int _setenv(const char *name, const char *value, int overwrite)
 {
-	char *newenv;
+	char *newenv, *oldenv;
 	int name_len, val_len;
 
 	if (name == NULL || strchr(name, '=') != NULL || name[0] == '\0')
