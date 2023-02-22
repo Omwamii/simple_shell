@@ -14,7 +14,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
 	static char *buffer;
 	static size_t buffer_size, current_pos; /* zero atuomatic */
-	size_t chars_read = 0, read_count = 0;
+	size_t chars_read = 0, read_count = 0, i;
 
 	buffer_size = BUFF_SIZE, buffer = malloc(buffer_size);
 	while (1)
@@ -34,7 +34,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 		}
 		if (read_count == 0) /*EOF only read*/
 			return (-1);
-		for (int i = 0; i < read_count; i++)
+		for (i = 0; i < read_count; i++)
 		{
 			if (read_chunk[i] == '\n')
 			{

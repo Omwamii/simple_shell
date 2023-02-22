@@ -9,6 +9,8 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <signal.h>
+#include <limits.h>
 
 #define BUFF_SIZE 1024
 #define CHUNK_SIZE 256
@@ -46,6 +48,7 @@ int _unsetenv(const char *name);
 char **tokenize(char *buffer, const char *delim);
 void execute_single(char *buffer);
 void execute_multiple(char **cmds);
+int cmp_chars(char str[], const char *delim);
 /**
   *struct aliases - a struct of aliases
   *@alias_name: name of alias
