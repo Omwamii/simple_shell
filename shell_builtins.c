@@ -8,7 +8,7 @@
   */
 void handle_cd(char **args)
 {
-	char *old_dir, *cur_dir;
+	char *old_dir = NULL, *cur_dir = NULL;
 
 	old_dir = getcwd(NULL, 0);
 	if (args[1] == NULL)
