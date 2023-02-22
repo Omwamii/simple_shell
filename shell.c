@@ -7,10 +7,11 @@
  *Return: success value
  */
 
-int main(int ac, char **argv)
+int main(__attribute__((unused)) int ac,__attribute__((unused)) char **argv)
 {
 	char *buffer, *buf2,  **cmds;
-	ssize_t nread, len = 0;
+	ssize_t nread;
+	size_t len = 0;
 
 	while (1)
 	{
