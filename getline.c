@@ -14,7 +14,8 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
 	static char *buffer;
 	static size_t buffer_size, current_pos; /* zero atuomatic */
-	size_t chars_read = 0, read_count = 0, i;
+	ssize_t chars_read = 0, read_count = 0, i;
+	char *read_chunk;
 
 	buffer_size = BUFF_SIZE, buffer = malloc(buffer_size);
 	while (1)
@@ -24,7 +25,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			buffer_size += BUFF_SIZE;  /*add more mem*/
 			buffer = realloc(buffer, buffer_size);
 		}
-		char read_chunk[CHUNK_SIZE]; /*to read input in chunks*/
+		read_chunk = malloc(CHUNK_SIZE);  /*to read input in chunks*/
 
 		read_count = read(fileno(stream), read_chunk, CHUNK_SIZE);
 		if (read_count == -1) /*Read error*/
@@ -50,5 +51,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			if (current_pos == buffer_size)
 				buffer_size += BUFF_SIZE, buffer = realloc(buffer, buffer_size);
 		}
+
+		free(read_chunk);
 	}
 }
