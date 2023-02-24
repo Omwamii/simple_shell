@@ -27,7 +27,7 @@ char **tokenize(char *buffer, const char *delim)
 	}
 
 	token_count++;
-	args = malloc(sizeof(char *) * token_count);
+	args = malloc(sizeof(char *) * (token_count));
 
 	if (args == NULL)
 	{
@@ -39,7 +39,7 @@ char **tokenize(char *buffer, const char *delim)
 
 	for (i = 0; token != NULL; i++)
 	{
-		args[i] = malloc(sizeof(char) * strlen(token));
+		args[i] = malloc(sizeof(char) * (strlen(token) + 1));
 		strcpy(args[i], token);
 		token = strtok(NULL, delim);
 	}

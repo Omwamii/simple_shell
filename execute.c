@@ -34,58 +34,76 @@ void (*check_builtin(char *command))(char **args)
   *
   *Return: success value
   */
-void execute(char *filepath, char **args)
+int execute(char *filepath, char **args)
 {
 	pid_t pid = fork();
 
 	if (pid == 0)
 	{
-		if (execve(filepath, args, NULL) == -1)
+		if (execve(filepath, args, environ) == -1)
 		{
 			perror("Error");
-			exit(EXIT_FAILURE);
+			return (-1);
 		}
+		return (0);
 	}
 	else if (pid < 0)
+	{
 		perror("fork");
+		return (-1);
+	}
 	else
 	{
-		wait(NULL);
-
+		while (wait(NULL) > 0)
+			;
 	}
+	return (0);
 }
 
 /**
   *execute_single - execute when single command is passed
   *@buffer: arguments string for single cmd
+  *
+  *Return: success value
   */
-void execute_single(char *buffer)
+int execute_single(char *buffer)
 {
 	char *filepath, **args;
 	void (*f)(char **);
+	int i;
 
 	args = tokenize(buffer, " \n");
 	if (args == NULL)
+	{
 		perror("unable to tokenize");
+		return (-1);
+	}
 	else
 	{
 		f = check_builtin(args[0]);
 		if (f != NULL)
+		{
 			f(args);
+			return (0);
+		}
 		else
 		{
 			filepath = find_path(args[0]);
 			if (filepath == NULL) /* command is not found */
+			{
 				perror(args[0]);
+				free_array(args);
+				return (-1);
+			}
 			else
 			{
-				execute(filepath, args); /* Execute the command */
+				i = execute(filepath, args);
 				if (strcmp(filepath, args[0]) != 0)
 					free(filepath);
+				free_array(args);
+				return (i);
 			}
 		}
-
-		free(args);
 	}
 
 }
@@ -93,16 +111,20 @@ void execute_single(char *buffer)
 /**
   *execute_multiple - execute multiple commands sequentially
   *@cmds: array of multiple commands
+  *
+  *Return: success value
   */
-void execute_multiple(char **cmds)
+int execute_multiple(char **cmds)
 {
 	char **cmd = cmds;
 	int i = 0;
 
 	while (cmd[i] != NULL)
 	{
-		execute_single(cmd[i]);
-		i++;
+		if (execute_single(cmd[i++]) == -1)
+			return (-1);
 	}
+
+	return (0);
 
 }

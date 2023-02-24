@@ -41,14 +41,16 @@ void handle_exit(char **args);
 void handle_setenv(char **args);
 void handle_unsetenv(char **args);
 void handle_env(char **args);
-void execute(char *filename, char **args);
+int execute(char *filename, char **args);
 void (*check_builtin(char *command))(char **args);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
 char **tokenize(char *buffer, const char *delim);
-void execute_single(char *buffer);
-void execute_multiple(char **cmds);
+int execute_single(char *buffer);
+int execute_multiple(char **cmds);
 int cmp_chars(char str[], const char *delim);
+void free_array(char **arr);
+int non_interactive(void);
 /**
   *struct aliases - a struct of aliases
   *@alias_name: name of alias

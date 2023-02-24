@@ -51,5 +51,5 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 				buffer_size += BUFF_SIZE, buffer = realloc(buffer, buffer_size);
 		}
 		free(read_chunk);
-	}
+	} /* buffer not freed ? */
 }

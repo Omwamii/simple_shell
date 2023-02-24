@@ -7,7 +7,8 @@
 
 void print_prompt(char *s)
 {
-	write(1, s, strlen(s));
+	if (write(1, s, strlen(s)) == -1)
+		perror("Error");
 }
 
 /**

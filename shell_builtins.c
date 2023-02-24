@@ -93,7 +93,7 @@ void handle_setenv(char **args)
 void handle_unsetenv(char **args)
 {
 	if (unsetenv(args[1]) != 0)
-		perror("variable not found");
+		perror(args[1]);
 
 } /* need to check if variable set */
 
