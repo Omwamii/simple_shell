@@ -1,32 +1,55 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
+#include "shell.h"
+
 /**
-  *main - entry point
-  *@ac: argument count
-  *@av: string of arguments
+  *_getline - gets input from user until
+  *@lineptr: pointer to buffer to store content
+  *@n: length of content to store
+  *@stream: file stream
   *
-  *Return: sucess value
+  *Return: number of characters read or -1 if err
   */
 
-int main(int ac, char **av)
+
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
-	char *buffer;
-	size_t len = 0;
-	size_t nread;
+	static char *buffer;
+	static size_t buffer_size, current_pos; /* zero atuomatic */
+	ssize_t chars_read = 0, read_count = 0, i;
+	char *read_chunk;
 
-	printf("$");
-	nread = getline(&buffer, &len, stdin);
-
-	if(nread == -1)
+	buffer_size = BUFF_SIZE, buffer = malloc(buffer_size);
+	while (1)
 	{
-		fprintf(stderr, "Error reading input");
-		exit(EXIT_FAILURE);
-	}
-
-	printf("%s", buffer);
-
-	free(buffer);
-
-	return (0);
+		if (current_pos == buffer_size) /*buffer is full*/
+		{
+			buffer_size += BUFF_SIZE;  /*add more mem*/
+			buffer = realloc(buffer, buffer_size);
+		}
+		read_chunk = malloc(CHUNK_SIZE); /*to read input in chunks*/
+		read_count = read(fileno(stream), read_chunk, CHUNK_SIZE);
+		if (read_count == -1) /*Read error*/
+		{
+			perror("Read error");
+			return (-1);
+		}
+		if (read_count == 0) /*EOF only read*/
+			return (-1);
+		for (i = 0; i < read_count; i++)
+		{
+			if (read_chunk[i] == '\n')
+			{
+				buffer[current_pos++] = read_chunk[i];
+				buffer[current_pos] = '\0';
+				chars_read++;
+				*lineptr = buffer, *n = chars_read;
+				current_pos = 0; /*reset position to first position*/
+				return (chars_read);
+			}
+			buffer[current_pos] = read_chunk[i];
+			current_pos++, chars_read++;
+			if (current_pos == buffer_size)
+				buffer_size += BUFF_SIZE, buffer = realloc(buffer, buffer_size);
+		}
+		free(read_chunk);
+	} /* buffer not freed ? */
 }

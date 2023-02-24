@@ -1,36 +1,44 @@
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <stdlib.h>
+#include "shell.h"
 
-int main(int argc, char *argv[])
+/**
+  *find_path - finds if file is in $PATH
+  *@filename: file to search
+  *
+  * Return: pointer to file string
+  */
+
+char *find_path(char *filename)
 {
-  if (argc != 2)
-  {
-    fprintf(stderr, "Usage: %s filename\n", argv[0]);
-    return 1;
-  }
+	char *path;
+	char *path_copy, *dir;
+	char *file;
 
-  char *path = getenv("PATH");
-  char *path_copy = strdup(path);
+	if (filename == NULL)
+	{
+		perror(filename);
+		return (NULL);
+	}
 
-  char *dir = strtok(path_copy, ":");
-  while (dir != NULL)
-  {
-    char file[1024];
-    snprintf(file, sizeof(file), "%s/%s", dir, argv[1]);
+	if (access(filename, F_OK) == 0) /*complete path was given*/
+		return (filename);
 
-    struct stat sb;
-    if (stat(file, &sb) == 0)
-    {
-      printf("%s\n", file);
-      break;
-    }
+	path = getenv("PATH");
+	path_copy = strdup(path);
+	dir = strtok(path_copy, ":");
 
-    dir = strtok(NULL, ":");
-  }
+	while (dir != NULL)
+	{
+		file = malloc(strlen(filename) + strlen(dir) + 2);
+		sprintf(file, "%s/%s", dir, filename);
 
-  free(path_copy);
-  return 0;
+		if (access(file, F_OK) == 0)
+		{
+			free(path_copy);
+			return (file);
+		}
+		free(file);
+		dir = strtok(NULL, ":");
+	}
+	free(path_copy);
+	return (NULL);
 }
-
